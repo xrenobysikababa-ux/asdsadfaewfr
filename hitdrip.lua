@@ -20,6 +20,7 @@ local Player = game.Players.LocalPlayer
 -- Mock Global Environment (as referenced by the original script)
 -- In a real execution environment, these should already be defined.
 local getgenv = getgenv or function() return {} end
+local sethiddenproperty = sethiddenproperty or nil -- SAFELY DEFINE sethiddenproperty
 local GENV = getgenv()
 GENV.options = GENV.options or {
     outlinesEnabled = true,
@@ -86,7 +87,7 @@ function filterMeshID(id)
 	return (string.find(id,'assetdelivery')~=nil and string.match(string.sub(id,37,#id),"%d+")) or string.match(id,"%d+")
 end
 
--- Finds if a MeshID is configured in the globals
+-- Finds if a MeshId is configured in the globals
 function findMeshID(id)
     for i,v in pairs(GENV.headhats) do
         if i=="meshid:"..id then return true,"headhats" end

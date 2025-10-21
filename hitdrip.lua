@@ -190,7 +190,7 @@ function HatdropFunction(Character, callback)
     
     -- Optional: Remove head
     if character:FindFirstChild("Head") and character.Head.ClassName ~= "Humanoid" then -- Prevent removing Humanoid if named "Head"
-        character.Head:remove() -- or :Destroy()
+        character.Head:Destroy() -- Changed from :remove() to :Destroy() to avoid potential "attempt to nil call"
     end
     
     -- Wait a bit for everything to process

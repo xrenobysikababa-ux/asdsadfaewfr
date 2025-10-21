@@ -142,7 +142,7 @@ function HatdropFunction(Character, callback)
     -- Resetting character reference (Critical for some executors/hacks)
     game.Players.LocalPlayer.Character = nil
     game.Players.LocalPlayer.Character = character
-    wait(game.Players.RespawnTime + 0.05)
+    task.wait(game.Players.RespawnTime + 0.05)
     
     -- Disable death state
     local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -194,7 +194,7 @@ function HatdropFunction(Character, callback)
     end
     
     -- Wait a bit for everything to process
-    wait(0.1)
+    task.wait(0.1)
     
     -- Get all remaining accessories and prepare them for alignment
     local foundmeshids = {}
@@ -251,7 +251,7 @@ end)
 
 -- Handle character respawning
 GENV.conn = Player.CharacterAdded:Connect(function(Character)
-    wait(0.5) -- Wait for character to fully load
+    task.wait(0.5) -- Wait for character to fully load
     HatdropFunction(Character, function(allhats)
         for i,v in pairs(allhats) do
             local handle = v[1]:FindFirstChild("Handle")

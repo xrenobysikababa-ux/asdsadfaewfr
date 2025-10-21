@@ -43,7 +43,7 @@ local options = GENV.options
 
 -- Check if the Part is network owned by the client
 local function _isnetworkowner(Part)
-	return Part.ReceiveAge == 0
+	return Part and Part.ReceiveAge == 0
 end
 
 -- Extracts the numerical ID from a MeshId string
@@ -79,20 +79,37 @@ end
 local function Align(Part1, Part0, cf, isflingpart) 
     local up = isflingpart -- Variable not strictly used in this extracted context but kept for completeness
     local velocity = Vector3.new(0,-30,0)
-    local con;
+    local connection;
     
-    con = ps:Connect(function()
-        if up~=nil then up=not up end
-        if not Part1:IsDescendantOf(workspace) then con:Disconnect() return end
-        if not _isnetworkowner(Part1) then con:Disconnect() return end -- Added Disconnect for safety
+    connection = ps:Connect(function()
+        -- Safely toggle 'up' if it exists and is not nil
+        if up ~= nil then up = not up end
+        
+        -- Check Part1 existence before attempting methods on it
+        if not Part1 or not Part1:IsDescendantOf(workspace) then 
+            connection:Disconnect() 
+            return 
+        end
+        
+        -- Check network ownership. If not owned, stop trying to control it.
+        if not _isnetworkowner(Part1) then 
+            connection:Disconnect() 
+            return 
+        end
+
         Part1.CanCollide = false
         Part1.CFrame = Part0.CFrame * cf
-        Part1.Velocity = velocity or Vector3.new(0,-30,0)
+        -- Use the defined velocity, fall back to default vector
+        Part1.Velocity = velocity or Vector3.new(0,-30,0) 
     end)
 
     return {
-        SetVelocity = function(self, v) velocity=v end,
-        SetCFrame = function(self, v) cf=v end,
+        SetVelocity = function(self, v) velocity = v end,
+        SetCFrame = function(self, v) cf = v end,
+        -- Added explicit Disconnect method for cleaner cleanup
+        Disconnect = function() 
+            if connection then connection:Disconnect() end
+        end,
     }
 end
 

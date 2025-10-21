@@ -20,7 +20,7 @@ local Player = game.Players.LocalPlayer
 -- Mock Global Environment (as referenced by the original script)
 -- In a real execution environment, these should already be defined.
 local getgenv = getgenv or function() return {} end
-local sethiddenproperty = sethiddenproperty or nil -- SAFELY DEFINE sethiddenproperty
+-- sethiddenproperty is now checked as a global inside HatdropFunction to avoid local shadowing conflicts.
 local GENV = getgenv()
 GENV.options = GENV.options or {
     outlinesEnabled = true,
@@ -167,6 +167,7 @@ function HatdropFunction(Character, callback)
     for i,v in pairs(character:GetChildren()) do
         if v:IsA("Accessory") then
             -- NOTE: sethiddenproperty is specific to executor environments.
+            -- This check now relies on the global sethiddenproperty being present
             if sethiddenproperty then
                 sethiddenproperty(v,"BackendAccoutrementState", 0) -- 0-3 works, 4 is default in-character state
             end

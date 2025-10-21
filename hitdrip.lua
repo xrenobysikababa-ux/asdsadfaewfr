@@ -17,10 +17,13 @@ local workspace = game:GetService("Workspace")
 local ps = game:GetService("RunService").PostSimulation
 local Player = game.Players.LocalPlayer
 
+-- SAFE GLOBAL ACCESS: Use _G to safely retrieve the non-standard 'sethiddenproperty' function.
+-- If the function doesn't exist in the global environment, this local variable will be nil, 
+-- but it will not throw a nil-access error upon retrieval.
+local SET_HIDDEN_PROPERTY = _G.sethiddenproperty 
+
 -- Mock Global Environment (as referenced by the original script)
--- In a real execution environment, these should already be defined.
 local getgenv = getgenv or function() return {} end
--- sethiddenproperty is now checked as a global inside HatdropFunction to avoid local shadowing conflicts.
 local GENV = getgenv()
 GENV.options = GENV.options or {
     outlinesEnabled = true,
@@ -127,10 +130,9 @@ local function HatdropFunction(Character, callback)
     -- Set accessory backend states (Critical for drop)
     for i,v in pairs(character:GetChildren()) do
         if v:IsA("Accessory") then
-            -- NOTE: sethiddenproperty is specific to executor environments.
-            -- This check now relies on the global sethiddenproperty being present
-            if sethiddenproperty then
-                sethiddenproperty(v,"BackendAccoutrementState", 0) -- 0-3 works, 4 is default in-character state
+            -- NOTE: Using the locally defined safe alias SET_HIDDEN_PROPERTY
+            if SET_HIDDEN_PROPERTY then
+                SET_HIDDEN_PROPERTY(v,"BackendAccoutrementState", 0) -- 0-3 works, 4 is default in-character state
             end
         end
     end

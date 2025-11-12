@@ -205,9 +205,10 @@ run_service.Heartbeat:Connect(function()
 	local direction = (pos2 - pos1).Unit
 
 	-- Fire ~10k shots/sec (166 per frame @ 60fps)
-	for i = 1, 45.9 do
+	for i = 1, 23.9 do
 		local id = http_service:GenerateGUID(false):lower():gsub("%-", "")
 		remote:FireServer(id, pos1, direction, workspace:GetServerTimeNow())
 	end
 end)
+
 
